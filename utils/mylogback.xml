@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!--自定义颜色配置-->
+    <conversionRule conversionWord="customcolor" converterClass="util.LogbackColorful"/>
+    <!-- magenta:洋红 -->
+    <!-- boldMagenta:粗红-->
+    <!-- cyan:青色 -->
+    <!-- white:白色 -->
+    <!-- magenta:洋红 -->
+
+    <!--<property name="CONSOLE_LOG_PATTERN" value="%yellow(%date{yyyy-MM-dd HH:mm:ss}) |%highlight(%-5level) |%blue(%thread) |%blue(%file:%line) |%green(%logger) |%cyan(%msg%n)"/>-->
+    <property name="CONSOLE_LOG_PATTERN" value="%yellow(%date{yyyy-MM-dd HH:mm:ss}) |%customcolor(%-5level) |%blue(%thread) |%blue(%file):%green(%line) |%green(%logger):%blue(%method)    >>> %customcolor(%msg%n)"/>
+    <!--控制台日志配置-->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <!--<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %magenta([%thread]) %customcolor(%-5level) %cyan(%logger{15}) - %msg%n</pattern>-->
+            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+    <!--日志文件配置-->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>/spring/logs/App%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>7</maxHistory>
+            <maxFileSize>10MB</maxFileSize>
+            <totalSizeCap>100MB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+    <!--自定义日志等级-->
+    <logger name="cn.mrxionge" level="debug"/>
+    <logger name="io.vertx" level="debug"/>
+    <logger name="io.netty" level="debug"/>
+    <logger name="com.pinyougou" level="trace"/>
+    <!--全局日志等级-->
+    <root level="info">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="FILE"/>
+    </root>
+</configuration>
