@@ -151,6 +151,15 @@ npm uninstall
 - 系统模块
 - 自定义模块
 
+### most used system module
+
+`fs`
+`path`
+`http`
+`url`
+`querystring`
+`events`
+
 ## keywords and usages
 
 require——引入其他模块
@@ -505,6 +514,62 @@ html
         div=a++
 jade
 ```
+
+### ejs
+
+like java **standard tag lib**, use `<% %>`
+
+## basic-middleware
+
+### multer for multimedia
+
+body-parser	解析post数据
+`multer`		解析post文件
+
+```html
+    <form action="http://localhost:8080/" method="post" enctype="multipart/form-data">
+      文件：<input type="file" name="f1" /><br>
+      <input type="submit" value="上传">
+    </form>
+```
+
+```js
+const express=require('express');
+const static=require('express-static');
+const cookieParser=require('cookie-parser');
+const cookieSession=require('cookie-session');
+const bodyParser=require('body-parser');
+const multer=require('multer');
+const ejs=require('ejs');
+const jade=require('jade');
+
+var server=express();
+
+server.listen(8080);
+
+//1.解析cookie
+server.use(cookieParser('sdfasl43kjoifguokn4lkhoifo4k3'));
+
+//2.使用session
+var arr=[];
+for(var i=0;i<100000;i++){
+  arr.push('keys_'+Math.random());
+}
+server.use(cookieSession({name: 'zns_sess_id', keys: arr, maxAge: 20*3600*1000}));
+
+//3.post数据
+server.use(bodyParser.urlencoded({extended: false}));
+server.use(multer({dest: './www/upload'}).any());
+
+//用户请求
+server.use('/', function (req, res, next){
+  console.log(req.query, req.body, req.files, req.cookies, req.session);
+});
+
+//4.static数据
+server.use(static('./www'));
+```
+
 ------------
 - [x] 01.历史、优势、现状、前景、必备基础技能、和前台JS的关系及区别.mp4
 - [x] 02.http系统模块使用.mp4
@@ -519,8 +584,8 @@ jade
 - [x] 11.Express框架3：cookie、session.mp4
 - [x] 12.jade模板库1：介绍、配置安装、基础语法.mp4
 - [x] 13.jade模板库2：高级语法、简单实例.mp4
-- [ ] 14.ejs模板库1：介绍、配置安装、基础语法、高级语法、实例.mp4
-- [ ] 15.Express框架整合：express整合、multer使用、consolidate和route.mp4
+- [x] 14.ejs模板库1：介绍、配置安装、基础语法、高级语法、实例.mp4
+- [x] 15.Express框架整合：express整合、multer使用、consolidate和route.mp4
 - [ ] 16.MySQL基本使用：安装、配置、数据库组成、Navicat使用.mp4
 - [ ] 17.MySQL基本使用：SQL基本写法(INSERT和SELECT)、NodeJS操作MySQL.mp4
 - [ ] 18.实例：基于Express的blog 1-数据库构建.mp4
