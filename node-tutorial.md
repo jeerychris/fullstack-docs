@@ -435,8 +435,77 @@ server.use('/', function (req, res){
 
 server.listen(8080);
 ```
---------------------
 
+## template engine
+
+- jade-破坏式、侵入式、强依赖
+- ejs-温和、非侵入式、弱依赖
+
+### jade
+
+1. 根据缩进，规定层级
+
+2. 属性放在()里面，逗号分隔
+  - style={}
+  - class=[]
+
+3. 内容空个格，直接往后堆
+
+**template**: `2.jade`
+
+```jade
+html
+  head
+    style
+    script(src="a.js")
+    link(href="a.css",rel="stylesheet")
+  body
+    div
+      ul
+        li
+          input(type="text",id="txt1",value="abc")
+        li
+          input(type="text",id="txt2",value="111")
+        li
+          input(type="text",id="txt3",value="222")
+    div
+```
+
+**jade-demo.js**
+```js
+const jade=require('jade');
+const fs=require('fs');
+
+var str=jade.renderFile('./views/2.jade', {pretty: true});
+
+fs.writeFile('./build/2.html', str, function (err){
+  if(err)
+    console.log('写入失败');
+  else
+    console.log('写入成功');
+});
+```
+**advanced**
+
+```jade
+doctype
+html
+  head
+    meta(charset="utf-8")
+    title jade测试页面
+    style.
+      div {width:100px;height:100px;background:#CCC;text-align:center;line-height:100px;float:left;margin:10px auto}
+      div.last {clear:left}
+  body
+    -var a=0;
+    while a<12
+      if a%4==0 && a!=0
+        div.last=a++
+      else
+        div=a++
+jade
+```
+------------
 - [x] 01.历史、优势、现状、前景、必备基础技能、和前台JS的关系及区别.mp4
 - [x] 02.http系统模块使用.mp4
 - [x] 03.fs文件模块.mp4
@@ -448,8 +517,8 @@ server.listen(8080);
 - [x] 09.Express框架1：介绍、配置安装.mp4
 - [x] 10.Express框架2：数据解析[12580sky.com].mp4
 - [x] 11.Express框架3：cookie、session.mp4
-- [ ] 12.jade模板库1：介绍、配置安装、基础语法.mp4
-- [ ] 13.jade模板库2：高级语法、简单实例.mp4
+- [x] 12.jade模板库1：介绍、配置安装、基础语法.mp4
+- [x] 13.jade模板库2：高级语法、简单实例.mp4
 - [ ] 14.ejs模板库1：介绍、配置安装、基础语法、高级语法、实例.mp4
 - [ ] 15.Express框架整合：express整合、multer使用、consolidate和route.mp4
 - [ ] 16.MySQL基本使用：安装、配置、数据库组成、Navicat使用.mp4
