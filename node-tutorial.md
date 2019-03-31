@@ -143,3 +143,334 @@ npm uninstall
   "description": "Node.js 测试模块(www.runoob.com)"
 }
 ```
+
+# node module system
+
+## 模块
+
+- 系统模块
+- 自定义模块
+
+## keywords and usages
+
+require——引入其他模块
+exports——输出
+module——批量输出
+
+exports.xxx=??;
+exports.xxx=??;
+exports.xxx=??;
+
+module.exports={
+	xxx:	??,
+	xxx:	??,
+	xxx:	??
+};
+
+1.自己的模块
+	require
+	module
+	exports
+
+2.引入模块	./	?
+3.".js"可选
+
+
+node_modules——放模块
+
+---------------------------------------------------------------------------------------------------------------------
+
+./
+不加./		必须放在node_modules里面
+
+---------------------------------------------------------------------------------------------------------------------
+## resolve module
+require
+1.如果有"./"
+	从当前目录找
+
+2.如果没有"./"
+	先从系统模块
+	再从node_modules找
+
+自定义模块统一，都放到node_modules里面
+
+---------------------------------------------------------------------------------------------------------------------
+
+1.模块里面
+	require——引入
+	exports——输出
+	module.exports——批量输出
+
+2.npm
+	帮咱们下载模块
+	自动解决依赖
+
+3.node_modules
+	模块放这里
+
+---------------------------------------------------------------------------------------------------------------------
+
+npm init
+npm publish
+npm --force unpublish
+
+---------------------------------------------------------------------------------------------------------------------
+
+# express framework
+
+like jquery, some basic enhancement, but it's **midleware** is powerful
+
+> Express is a minimal and flexible Node.js web application framework that provides a robust set of features for web and mobile applications.
+
+## install
+
+```shell
+npm install express
+# install midleware express-static
+npm install express-static
+```
+## basic use
+
+1. 依赖中间件
+
+2. 接收请求
+   get/post/use
+   get('/地址', function (req, res){});
+
+3. 非破坏式的, express保留了原生的功能，添加了一些方法(send)，增强原有的功能
+   req.url
+
+4. static用法
+   const static=require('express-static');
+   server.use(static('./www'));
+
+```js
+const express=require('express');
+const expressStatic=require('express-static');
+
+var server=express();
+server.listen(8080);
+
+//用户数据
+var users={
+  'blue': '123456',
+  'zhangsan': '654321',
+  'lisi': '987987'
+};
+
+server.get('/login', function (req, res){
+  var user=req.query['user'];
+  var pass=req.query['pass'];
+
+  if(users[user]==null){
+    res.send({ok: false, msg: '此用户不存在'});
+  }else{
+    if(users[user]!=pass){
+      res.send({ok: false, msg: '密码错了'});
+    }else{
+      res.send({ok: true, msg: '成功'});
+    }
+  }
+});
+
+server.use(expressStatic('./www'));
+```
+----------------
+
+## data resolution
+
+### GET vs POST
+
+GET-无需中间件
+req.query
+
+POST-需要"body-parser"
+server.use(bodyParser.urlencoded({}));
+
+server.use(function (){
+	req.body
+});
+
+### 链式操作：
+
+```js
+// 1.GET
+// req.query
+
+// POST
+  server.use(bodyParser.urlencoded({limit: }));
+  server.use(function (req, res, next){
+    req.body
+  });
+
+// 2.链式操作
+  server.use(function (req, res, next){});
+  server.get('/', function (req, res, next){});
+  server.post(function (req, res, next){});
+
+  next();
+
+  server.use('/login', function (){
+    mysql.query(function (){
+      if(有错)
+        res.emit('error');
+      else
+        next();
+    });
+  });
+
+// 3.中间件(body-parser)、自己写中间件
+// next();
+
+  server.use(function (req, res, next){
+    var str='';
+    req.on('data', function (data){
+      str+=data;
+    });
+    req.on('end', function (){
+      req.body=querystring.parse(str);
+      next();
+    });
+  });
+```
+## cookie and session
+
+### 中间件
+
+```js
+const cookieParser=require('cookie-parser');
+const cookieSession=require('cookie-session');
+```
+
+### conceptions
+
+http-**无状态的**
+
+cookie、session
+
+cookie：在浏览器保存一些数据，每次请求都会带过来
+  *不安全、有限(4K)
+
+session：保存数据，保存在服务端
+  *安全、无限
+
+session：基于cookie实现的
+  *cookie中会有一个session的ID，服务器利用sessionid找到session文件、读取、写入
+
+  隐患：session劫持
+
+--------------
+
+### cookie
+1.读取——cookie-parser
+2.发送——
+
+session
+cookie-session
+
+cookie：
+1.cookie空间非常小——省着用
+2.安全性非常差
+
+1.精打细算
+2.校验cookie是否被篡改过
+
+a.发送cookie
+res.secret='字符串';
+res.cookie(名字, 值, {path: '/', maxAge: 毫秒, signed: true});
+
+```js
+server.use(cookieParser('wesdfw4r34tf'));
+
+server.use('/', function (req, res){
+  req.secret='wesdfw4r34tf';
+  res.cookie('user', 'blue', {signed: true});
+
+  console.log('签名cookie：', req.signedCookies)
+  console.log('无签名cookie：', req.cookies);
+
+  res.send('ok');
+});
+
+// 删除cookie
+res.clearCookie(名字);
+```
+
+### session
+cookie-session
+
+```js
+const express=require('express');
+const cookieParser=require('cookie-parser');
+const cookieSession=require('cookie-session');
+
+var server=express();
+
+//cookie
+var arr=[];
+
+for(var i=0;i<100000;i++){
+  arr.push('sig_'+Math.random());
+}
+
+server.use(cookieParser());
+server.use(cookieSession({
+  name: 'sess',
+  keys: arr,
+  maxAge: 2*3600*1000
+}));
+
+server.use('/', function (req, res){
+  if(req.session['count']==null){
+    req.session['count']=1;
+  }else{
+    req.session['count']++;
+  }
+
+  console.log(req.session['count']);
+
+  res.send('ok');
+});
+
+server.listen(8080);
+```
+--------------------
+
+- [x] 01.历史、优势、现状、前景、必备基础技能、和前台JS的关系及区别.mp4
+- [x] 02.http系统模块使用.mp4
+- [x] 03.fs文件模块.mp4
+- [x] 04.http数据解析-get.mp4
+- [x] 05.http数据解析-post.mp4
+- [x] 06.实例&总结1：简易httpServer搭建.mp4
+- [x] 07.NodeJS模块化1：系统模块介绍.mp4
+- [x] 08.NodeJS模块化2：自定义模块.mp4
+- [x] 09.Express框架1：介绍、配置安装.mp4
+- [x] 10.Express框架2：数据解析[12580sky.com].mp4
+- [x] 11.Express框架3：cookie、session.mp4
+- [ ] 12.jade模板库1：介绍、配置安装、基础语法.mp4
+- [ ] 13.jade模板库2：高级语法、简单实例.mp4
+- [ ] 14.ejs模板库1：介绍、配置安装、基础语法、高级语法、实例.mp4
+- [ ] 15.Express框架整合：express整合、multer使用、consolidate和route.mp4
+- [ ] 16.MySQL基本使用：安装、配置、数据库组成、Navicat使用.mp4
+- [ ] 17.MySQL基本使用：SQL基本写法(INSERT和SELECT)、NodeJS操作MySQL.mp4
+- [ ] 18.实例：基于Express的blog 1-数据库构建.mp4
+- [ ] 19.实例：基于Express的blog 2-NodeJS服务搭建.mp4
+- [ ] 20.实例：基于Express的blog 3-banner部分.mp4
+- [ ] 21.实例：基于Express的blog 3-banner文章列表.mp4
+- [ ] 22.实例：基于Express的blog 3-banner文章详情.mp4
+- [ ] 23.实例：基于Express的blog 3-banner转义输出.mp4
+- [ ] 24.实例：基于Express的blog 3-banner点赞.mp4
+- [ ] 25.SQL语句1：4大操作语句基本写法、WHERE子句、ORDER子句、GROUP.mp4
+- [ ] 26.SQL语句2：GROUP子句应用.mp4
+- [ ] 27.SQL语句3：LIMIT子句[12580sky.com].mp4
+- [ ] 28.项目实战 - 教育网站1：数据字典、数据库结构.mp4
+- [ ] 29.项目实战 - 教育网站2：Express结构搭建[12580sky.com].mp4
+- [ ] 30.项目实战 - 教育网站3：router、后台管理结构.mp4
+- [ ] 31.项目实战 - 教育网站5：banner数据添加、删除.mp4
+- [ ] 32.项目实战 - 教育网站7：banner数据修改.mp4
+- [ ] 33.项目实战 - 教育网站8：custom数据搭建、添加、文件上传.mp4
+- [ ] 34.项目实战 - 教育网站10：custom数据删除、文件操作.mp4
+- [ ] 35.项目实战 - 教育网站11：custom数据修改、文件替换.mp4
+- [ ] 36.项目实战 - 教育网站12：前台接口-banner、custom、Angular.mp4
+- [ ] 37.课程总结、二期内容介绍.mp4
