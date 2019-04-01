@@ -519,6 +519,10 @@ jade
 
 like java **standard tag lib**, use `<% %>`
 
+### consolidate
+
+a unified interface for express template engine
+
 ## basic-middleware
 
 ### multer for multimedia
@@ -586,8 +590,8 @@ server.use(static('./www'));
 - [x] 13.jade模板库2：高级语法、简单实例.mp4
 - [x] 14.ejs模板库1：介绍、配置安装、基础语法、高级语法、实例.mp4
 - [x] 15.Express框架整合：express整合、multer使用、consolidate和route.mp4
-- [ ] 16.MySQL基本使用：安装、配置、数据库组成、Navicat使用.mp4
-- [ ] 17.MySQL基本使用：SQL基本写法(INSERT和SELECT)、NodeJS操作MySQL.mp4
+- [x] 16.MySQL基本使用：安装、配置、数据库组成、Navicat使用.mp4
+- [x] 17.MySQL基本使用：SQL基本写法(INSERT和SELECT)、NodeJS操作MySQL.mp4
 - [ ] 18.实例：基于Express的blog 1-数据库构建.mp4
 - [ ] 19.实例：基于Express的blog 2-NodeJS服务搭建.mp4
 - [ ] 20.实例：基于Express的blog 3-banner部分.mp4
