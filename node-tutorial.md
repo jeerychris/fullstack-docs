@@ -574,6 +574,26 @@ server.use('/', function (req, res, next){
 server.use(static('./www'));
 ```
 
+## database mysql
+
+```js
+const mysql = require('mysql');
+
+//1.连接
+//createConnection(哪台服务器, 用户名, 密码, 库)
+var db = mysql.createConnection({ host: 'localhost', user: 'root', password: 'mysql57', database: 'pinyougoudb' });
+
+//2.查询
+//query(干啥, 回调)
+db.query("SELECT * FROM `tb_user` limit 1;", (err, data) => {
+  if (err)
+    console.log('出错了', err);
+  else
+    console.log('成功了');
+  console.log(data);
+});
+```
+
 ------------
 - [x] 01.历史、优势、现状、前景、必备基础技能、和前台JS的关系及区别.mp4
 - [x] 02.http系统模块使用.mp4
@@ -611,4 +631,3 @@ server.use(static('./www'));
 - [ ] 34.项目实战 - 教育网站10：custom数据删除、文件操作.mp4
 - [ ] 35.项目实战 - 教育网站11：custom数据修改、文件替换.mp4
 - [ ] 36.项目实战 - 教育网站12：前台接口-banner、custom、Angular.mp4
-- [ ] 37.课程总结、二期内容介绍.mp4
