@@ -115,7 +115,87 @@ npm install express -g   # 全局安装
 
 ## package.json
 
+[对package.json的理解和学习](https://www.cnblogs.com/whkl-m/p/6617540.html)
+
 > package.json 位于模块的目录下，用于定义包的属性。
+
+1. npm安装package.json时  直接转到当前项目目录下用命令npm install 或npm install --save-dev安装即可，自动将package.json中的模块安装到node-modules文件夹下
+2. package.json 中添加中文注释会编译出错
+3. 每个项目的根目录下面，一般都有一个package.json文件，定义了这个项目所需要的各种模块，以及项目的配置信息（比如名称、版本、许可证等元数据）。npm install 命令根据这个配置文件，自动下载所需的模块，也就是配置项目所需的运行和开发环境。
+
+最简单的的一个package.json 文件（只有两个数据，项目名称和项目版本，他们都是必须的，如果没有就无法install）
+
+```json
+{
+  "name": "app-name",
+  "version": "1.0.0"
+}
+```
+
+### scripts
+
+指定了运行脚本命令的npm命令行缩写，比如start指定了运行npm run start时，所要执行的命令。
+
+下面的设置指定了npm run dev、npm run bulid、npm run unit、npm run test、npm run lint时，所要执行的命令。　
+
+```json
+"scripts": {
+    "dev": "node build/dev-server.js",
+    "build": "node build/build.js",
+    "unit": "cross-env BABEL_ENV=test karma start test/unit/karma.conf.js --single-run",
+    "test": "npm run unit",
+    "lint": "eslint --ext .js,.vue src test/unit/specs"
+  },
+```
+
+### dependencies，devDependencies
+
+`npm install --save`参数表示将该模块写入dependencies属性，
+`npm install --save-dev`表示将该模块写入devDependencies属性。
+
+`npm install` defaut is with `--save` option, write dependency to package.json and `npm uninstall` uninstall and remove from package.json
+
+```json
+"dependencies": {
+    "vue": "^2.2.2",
+    "vue-router": "^2.2.0"
+  },
+  "devDependencies": {
+    "autoprefixer": "^6.7.2",
+    "babel-core": "^6.22.1",
+    "babel-eslint": "^7.1.1",
+    "babel-loader": "^6.2.10",
+    "babel-plugin-transform-runtime": "^6.22.0",
+    "babel-preset-env": "^1.2.1",
+    "babel-preset-stage-2": "^6.22.0",
+    "babel-register": "^6.22.0",
+    "chalk": "^1.1.3",
+}
+```
+### 关于版本号的描述
+
+[package.json's dependency version](https://www.jianshu.com/p/b3d86ddfd555)
+
+使用NPM下载和发布代码时都会接触到版本号。NPM使用语义版本号来管理代码，这里简单介绍一下。
+语义版本号分为X.Y.Z三位，分别代表主版本号、次版本号和补丁版本号。当代码变更时，版本号按以下原则更新。
+
+- 如果只是修复bug，需要更新Z位。
+- 如果是新增了功能，但是向下兼容，需要更新Y位。
+- 如果有大变动，向下不兼容，需要更新X位。
+
+##### 使用~表示版本范围
+
+| 标识示例 |           描述           |         版本范围         |                                         说明                                         |
+| :------: | :----------------------: | :----------------------: | :----------------------------------------------------------------------------------: |
+|  ~2.3.4  | 主版本+次要版本+补丁版本 | 2.3.4 <= version < 2.4.0 | 在主版本+次要版本不允许变更的前提下，允许补丁版本升级（补丁板板号下限是4，无上限）。 |
+|   ~2.3   |     主版本+次要版本      | 2.3.0 <= version < 2.4.0 |               在主版本+次要版本不允许变更的前提下，允许补丁版本升级。                |
+|    ~2    |          主版本          | 2.0.0 <= version < 3.0.0 |               在主版本不允许变更的前提下，允许次要版本+补丁版本升级。                |
+
+##### 使用^表示版本范围
+
+| 标识示例 |     描述      |         版本范围         |                                        说明                                         |
+| :------: | :-----------: | :----------------------: | :---------------------------------------------------------------------------------: |
+|  ^1.3.4  | 主版本号不为0 | 1.3.4 <= version < 2.0.0 | 主版本不为0，允许次要版本+补丁版本升级（此例下限是1.3.4，上线是2.0.0但不匹配2.0.0） |
 
 ## most used command
 
@@ -171,15 +251,15 @@ exports.xxx=??;
 exports.xxx=??;
 
 module.exports={
-	xxx:	??,
-	xxx:	??,
-	xxx:	??
+​	xxx:	??,
+​	xxx:	??,
+​	xxx:	??
 };
 
 1.自己的模块
-	require
-	module
-	exports
+​	require
+​	module
+​	exports
 
 2.引入模块	./	?
 3.".js"可选
@@ -196,27 +276,27 @@ node_modules——放模块
 ## resolve module
 require
 1.如果有"./"
-	从当前目录找
+​	从当前目录找
 
 2.如果没有"./"
-	先从系统模块
-	再从node_modules找
+​	先从系统模块
+​	再从node_modules找
 
 自定义模块统一，都放到node_modules里面
 
 ---------------------------------------------------------------------------------------------------------------------
 
 1.模块里面
-	require——引入
-	exports——输出
-	module.exports——批量输出
+​	require——引入
+​	exports——输出
+​	module.exports——批量输出
 
 2.npm
-	帮咱们下载模块
-	自动解决依赖
+​	帮咱们下载模块
+​	自动解决依赖
 
 3.node_modules
-	模块放这里
+​	模块放这里
 
 ---------------------------------------------------------------------------------------------------------------------
 
@@ -298,7 +378,7 @@ POST-需要"body-parser"
 server.use(bodyParser.urlencoded({}));
 
 server.use(function (){
-	req.body
+​	req.body
 });
 
 ### 链式操作：

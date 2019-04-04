@@ -30,6 +30,8 @@ list = {ArrayList@9904}  size = 10
 
 > delete chrome's cookie data.
 
+**Note**: there is a option inside chrome, **disable cache**.
+
 ## Conclusion
 
 ### preparation
