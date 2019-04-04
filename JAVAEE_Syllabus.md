@@ -140,7 +140,7 @@ POST方法通过把请求参数值放在请求体中来克服GET方法的限制�
 | 地址栏没有变化               | 地址栏变化                  |
 | fast                         | slow                        |
 | web -> server ->server ->web | web ->server > web > server |
-| same request                 			| 	different		|
+| same request                 | different                   |
 
 ```java
 request.getRequestDispatcher("demo.jsp").forward(request, response);
