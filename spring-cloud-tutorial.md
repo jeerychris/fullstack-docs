@@ -320,3 +320,46 @@ public class OrderApplication {
 		SpringApplication.run(OrderApplication.class, args);
 	}
 }
+
+# Feign
+
+<https://cloud.spring.io/spring-cloud-netflix/multi/multi_spring-cloud-feign.html>
+
+Feign is a **declarative** RESTFul http client. It makes writing web service clients easier. To use Feign create an interface and annotate it. 
+
+**enable**
+
+```java
+@SpringBootApplication
+@EnableFeignClients
+public class Application {
+
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+    }
+
+}
+```
+
+**FeignClient**
+
+```java
+@FeignClient(value = "itcast-microservice-item") // 申明这是一个Feign客户端，并且指明服务id
+public interface ItemFeignClient {
+	@RequestMapping(value = "/item/{id}", method = RequestMethod.GET)
+	public Item queryItemById(@PathVariable("id") Long id);
+
+}
+```
+
+**use**
+
+```java
+    @Autowired
+    private ItemFeignClient itemFeignClient;
+
+	@HystrixCommand(fallbackMethod = "queryItemByIdFallbackMethod") // 进行容错处理
+	public Item queryItemById(Long id) {
+		return this.itemFeignClient.queryItemById(id);
+	}
+```
