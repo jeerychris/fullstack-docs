@@ -48,6 +48,9 @@ OrderServie -> ItemService
 - service provider configure
 - service consumer configure
 - databind problem
+- eureka anthentication
+    - server
+    - service provider and consumer, 服务 registry or fetch 时设置账户信息 `http://user:pwd@host:port/path`
 
 ```xml
     <!-- 导入Spring Cloud的依赖管理 -->
@@ -67,8 +70,13 @@ OrderServie -> ItemService
         <!-- 导入Eureka服务的依赖 -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-eureka-server</artifactId>
+            <artifactId>spring-cloud-starter-eurekakkkkkkkkkkkk-server</artifactId>
         </dependency>
+        <!-- 安全认证 -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
     </dependencies>
 ```
 
@@ -86,6 +94,12 @@ eureka:
     fetch-registry: false
     serviceUrl:
       defaultZone: http://127.0.0.1:${server.port}/eureka/
+security:
+  basic:
+    enabled: true
+  user:
+    name: eureka
+    password: 123456
 ```
 ```java
 @EnableEurekaServer
@@ -110,7 +124,7 @@ eureka:
     fetch-registry: true
     register-with-eureka: true
     service-url:
-      defaultZone: http://localhost:6868/eureka/
+      defaultZone: http://eureka:123456@localhost:6868/eureka/
   instance:
     prefer-ip-address: true # registy ip to server
 ```
@@ -140,7 +154,7 @@ eureka:
     register-with-eureka: false
     fetch-registry: true
     service-url:
-      defaultZone: http://localhost:6868/eureka/
+      defaultZone: http://eureka:123456@localhost:6868/eureka/
 ```
 
 ```java
@@ -186,4 +200,52 @@ public class OrderApplication {
         </exclusion>
     </exclusions>
 </dependency>
+```
+
+## eureka cluster
+
+server registry each other
+
+**server 1**
+
+```yml
+server:
+  port: 6868
+spring:
+  application:
+    name: spring-cloud-microservice-eureka
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    serviceUrl:
+      defaultZone: http://eureka:123456@127.0.0.1:${server.port}/eureka/
+security:
+  basic:
+    enabled: true
+  user:
+    name: eureka
+    password: 123456
+```
+
+**server 2**
+
+```yml
+server:
+  port: 6869
+spring:
+  application:
+    name: spring-cloud-microservice-eureka
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    serviceUrl:
+      defaultZone: http://eureka:123456@127.0.0.1:${server.port}/eureka/
+security:
+  basic:
+    enabled: true
+  user:
+    name: eureka
+    password: 123456
 ```
