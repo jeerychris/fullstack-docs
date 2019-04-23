@@ -43,3 +43,27 @@ another method to installs service
 
 ```
 
+# Syntax
+
+**shell**: mongo
+
+see  doc `mogodb-ReferenceCards15.pdf`
+
+```js
+// use, show, help
+
+// show basic command
+help;
+
+show dbs;
+use test;
+show collections();
+
+// db.createCollection("users");
+// if collection not exists, create 
+db.users.insert({name: "Bob", age: 20});
+
+db.users.find();
+db.users.find({name: "Bob"});
+```
+

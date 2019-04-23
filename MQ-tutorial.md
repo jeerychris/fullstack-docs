@@ -109,3 +109,88 @@ MQ的发布订阅肯定不是只是简单的一对一，一个上游和一个下
 
 # ActiveMQ
 
+deployed as a web service
+
+## springboot activemq demo
+
+- configure brocker
+- destination
+- listener
+- enable
+
+```xml
+<!-- jms -->
+<dependency>
+	<groupId>org.springframework.boot</groupId>
+	<artifactId>spring-boot-starter-activemq</artifactId>
+</dependency>
+```
+
+```markdown
+# ACTIVEMQ (ActiveMQProperties)
+spring.activemq.in-memory=true #embeded activemq
+#spring.activemq.broker-url= 
+#spring.activemq.password= 
+#spring.activemq.user= 
+```
+
+```java
+@Bean
+public Queue queue() {
+    return new ActiveMQQueue("roncoo.queue");
+}
+```
+
+```java
+@Component
+public class RoncooJmsComponent {
+
+	@Autowired
+	private JmsMessagingTemplate jmsMessagingTemplate;
+	
+	@Autowired
+	private Queue queue;
+
+	public void send(String msg) {
+		this.jmsMessagingTemplate.convertAndSend(this.queue, msg);
+	}
+
+	@JmsListener(destination = "roncoo.queue")
+	public void receiveQueue(String text) {
+		System.out.println("接受到：" + text);
+	}
+}
+```
+
+```java
+@EnableJms 
+@SpringBootApplication
+public class SpringBootDemo211Application {
+
+	public static void main(String[] args) {
+		SpringApplication.run(SpringBootDemo211Application.class, args);
+	}
+}
+```
+
+# RabitMQ
+
+## spring boot rabbitMq 
+
+- Configuration
+- Annotation  `@EnableRabbit`
+
+```xml
+<!-- amqp -->
+<dependency>
+	<groupId>org.springframework.boot</groupId>
+	<artifactId>spring-boot-starter-amqp</artifactId>
+</dependency>
+```
+
+```yml
+#spring.rabbitmq.host=localhost
+#spring.rabbitmq.port=5672
+#spring.rabbitmq.password=
+#spring.rabbitmq.username=
+```
