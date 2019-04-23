@@ -249,3 +249,30 @@ security:
     name: eureka
     password: 123456
 ```
+
+# Ribbon
+
+client end load balance
+
+![ribbon-arch](images/Ribbon-arch.png)
+
+## demo
+
+```java
+    @Bean
+    @LoadBalanced
+    public RestTemplate getRestTemplate() {
+        return new RestTemplate(new OkHttp3ClientHttpRequestFactory());
+    }
+```
+
+```java
+@Autowired
+private RestTemplate restTemplate;
+
+public Item queryItemById(Long id) {
+    String serviceId = "spring-cloud-item-microService";
+    String url = "http://" + serviceId + "/items/" + id;
+    return restTemplate.getForObject(url, Item.class);
+}
+```
