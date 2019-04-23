@@ -276,3 +276,47 @@ public Item queryItemById(Long id) {
     return restTemplate.getForObject(url, Item.class);
 }
 ```
+
+**IDEA Tips**: edit run configrations to run multiple instance
+
+# Hystrix
+
+## 雪崩效应 avalanche
+
+在微服务架构中通常会有多个服务层调用，基础服务的故障可能会导致级联故障，进而造成整个系统不可用的情况，这种现象被称为服务雪崩效应。服务雪崩效应是一种因“服务提供者”的不可用导致“服务消费者”的不可用,并将不可用逐渐放大的过程。
+
+如果下图所示：A作为服务提供者，B为A的服务消费者，C和D是B的服务消费者。A不可用引起了B的不可用，并将不可用像滚雪球一样放大到C和D时，雪崩效应就形成了。
+
+![avalanche](images/service-avalanche.png)
+
+## hystrx demo
+
+```xml
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-hystrix</artifactId>
+		</dependency>
+```
+
+
+```java
+	@HystrixCommand(fallbackMethod = "queryItemByIdFallbackMethod") // 进行容错处理
+	public Item queryItemById(Long id) {
+		return this.itemFeignClient.queryItemById(id);
+	}
+
+    public Item queryItemByIdFallbackMethod(Long id){ // 请求失败执行的方法
+		return new Item(id, "查询商品信息出错!", null, null, null);
+	}
+```
+
+```java
+@EnableHystrix
+@EnableDiscoveryClient
+@SpringBootApplication
+public class OrderApplication {
+	
+	public static void main(String[] args) {
+		SpringApplication.run(OrderApplication.class, args);
+	}
+}
