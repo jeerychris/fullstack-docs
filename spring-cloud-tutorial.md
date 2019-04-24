@@ -498,6 +498,15 @@ Config Server是一个可横向扩展、集中式的配置服务器，它用于�
 
 该文件的命名规则是：{application}-{profile}.properties
 
+`microservice-dev.properties`
+
+```properties
+jdbc.driverClassName=com.mysql.jdbc.Driver
+jdbc.url=jdbc:mysql://localhost:3306/taotao-dev?useUnicode=true
+jdbc.username=root
+jdbc.password=root
+```
+
 ## config server
 
 - dependency
@@ -557,3 +566,58 @@ public class ConfigApplication {
 ```
 
 其中{label}是指分支，默认是master
+
+## config client
+
+- dep
+- `bootstrap.yml`
+- inject
+
+### config client demo
+
+**dep**
+```xml
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-config</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+```
+
+**bootstrap.xml**
+
+> like `application.properties`, but higher priority, it is **bootstrap** phase loaded.
+
+```yml
+spring:
+  cloud:
+    config:
+      name: microservice    # application name, self defined
+      profile: test
+      label: master
+      uri: http://localhost:6688/
+```
+
+**inject**
+
+```java
+@RefreshScope
+@Component
+@ConfigurationProperties(prefix = "jdbc")
+public class JdbcConfigBean {
+    // @Value("${jdbc.driverClassName}")
+    private String driverClassName;
+    // @Value("${jdbc.url}")
+    private String url;
+    // @Value("${jdbc.username}")
+    private String username;
+    // @Value("${jdbc.password}")
+    private String password;
+```
+
+> **tricks**: 借助与git的**webhook**（web钩子）实现自动更新, gogs、github等git服务器提供了web hook功能，意思是，在仓库中的资源发生更新时会通知给谁，这里的谁是一个url地址
+
+![git-webhook](images/auto-refresh-with-git-webhook.png)
