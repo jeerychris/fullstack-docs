@@ -329,7 +329,7 @@ Feign is a **declarative** RESTFul http client. It makes writing web service cli
 
 **enable**
 
-```java
+​```java
 @SpringBootApplication
 @EnableFeignClients
 public class Application {
@@ -362,4 +362,123 @@ public interface ItemFeignClient {
 	public Item queryItemById(Long id) {
 		return this.itemFeignClient.queryItemById(id);
 	}
+```
+
+# Zuul
+
+**Router and Filter**
+
+<https://cloud.spring.io/spring-cloud-static/Greenwich.RELEASE/multi/multi__router_and_filter_zuul.html>
+
+Routing is an integral part of a microservice architecture. For example, `/` may be mapped to your web application, `/api/users` is mapped to the user service and `/api/shop` is mapped to the shop service. Zuul is a JVM-based router and server-side load balancer from Netflix.
+
+![microservice-arch-without-zuul](images/microservice-arch.png)
+
+**disadvantages**
+
+- 首先，破坏了服务无状态特点。
+为了保证对外服务的安全性，我们需要实现对服务访问的权限控制，而开放服务的权限控制机制将会贯穿并污染整个开放服务的业务逻辑，这会带来的最直接问题是，破坏了服务集群中REST API无状态的特点。
+从具体开发和测试的角度来说，在工作中除了要考虑实际的业务逻辑之外，还需要额外可续对接口访问的控制处理。
+
+- 其次，无法直接复用既有接口。
+当我们需要对一个即有的集群内访问接口，实现外部服务访问时，我们不得不通过在原有接口上增加校验逻辑，或增加一个代理调用来实现权限控制，无法直接复用原有的接口。
+
+面对类似上面的问题，我们要如何解决呢？ 答案是：服务网关！
+
+为了解决上面这些问题，我们需要将**权限控制**这样的东西从我们的服务单元中抽离出去，而最适合这些逻辑的地方就是处于**对外访问最前端的地方**，我们需要一个更强大一些的均衡负载器 -> **服务网关**。
+
+Netflix uses Zuul for the following:
+
+- Authentication
+- Insights
+- Stress Testing
+- Canary Testing
+- Dynamic Routing
+- Service Migration
+- Load Shedding
+- Security
+- Static Response handling
+- Active/Active traffic management
+
+## demo
+
+- dependency
+- zuulproxy
+- route rules configuration
+
+**dep**
+
+```xml
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-zuul</artifactId>
+        </dependency>
+        <!-- 导入Eureka服务的依赖 -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-eureka-server</artifactId>
+        </dependency>
+```
+
+**zuul proxy**
+
+```java
+@EnableZuulProxy
+@EnableDiscoveryClient
+@SpringBootApplication
+public class ZuulApplication {
+    public static void main(String[] args) {
+        new SpringApplication().run(ZuulApplication.class);
+    }
+}
+```
+
+**route rules**
+
+can user *, regular expression, prefix, etc.
+
+```yml
+server:
+  port: 6767
+spring:
+  application:
+    name: spring-cloud-microservice-zuul
+zuul:
+  routes:
+    item-service:
+      path: /item-service/**
+      # url: http://localhost:8081
+      service-id: spring-cloud-item-microService
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://eureka:123456@localhost:6868/eureka/
+```
+
+## Zuul filter
+
+![zuul-filter](images/zuul-filter.png)
+
+```java
+public class UserLoginZuulFilter extends ZuulFilter {
+
+    @Override
+    public boolean shouldFilter() {
+        return true; // 该过滤器需要执行
+    }
+
+    @Override
+    public Object run() { //编写业务逻辑
+        RequestContext requestContext = RequestContext.getCurrentContext();
+        HttpServletRequest request = requestContext.getRequest();
+        String token = request.getParameter("token");
+        if(StringUtils.isEmpty(token)){
+            requestContext.setSendZuulResponse(false); // 过滤该请求，不对其进行路由
+            requestContext.setResponseStatusCode(401); // 设置响应状态码
+            return null;
+        }
+        return null;
+    }
 ```
