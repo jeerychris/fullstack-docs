@@ -320,6 +320,7 @@ public class OrderApplication {
 		SpringApplication.run(OrderApplication.class, args);
 	}
 }
+```
 
 # Feign
 
@@ -329,7 +330,7 @@ Feign is a **declarative** RESTFul http client. It makes writing web service cli
 
 **enable**
 
-​```java
+```java
 @SpringBootApplication
 @EnableFeignClients
 public class Application {
@@ -482,3 +483,77 @@ public class UserLoginZuulFilter extends ZuulFilter {
         return null;
     }
 ```
+
+# spring cloud config
+
+<https://cloud.spring.io/spring-cloud-static/Greenwich.RELEASE/single/spring-cloud.html#_spring_cloud_config>
+
+Spring Cloud Config provides server-side and client-side support for externalized configuration in a distributed system. With the Config Server, you have a central place to manage external properties for applications across all environments. The concepts on both client and server map identically to the Spring `Environment` and `PropertySource` abstractions, so they fit very well with Spring applications but can be used with any application running in any language. 
+
+Config Server是一个可横向扩展、集中式的配置服务器，它用于集中管理应用程序各个环境下的配置，默认使用Git.
+
+![spring-cloud-config](images/spring-cloud-config-arch.png)
+
+**property sources on git server**
+
+该文件的命名规则是：{application}-{profile}.properties
+
+## config server
+
+- dependency
+- configure application git uri
+- @EnableConfigServer
+
+### config server demo
+
+**dep**
+```xml
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-config-server</artifactId>
+        </dependency>
+    </dependencies>
+```
+
+**git**
+```yml
+server:
+  port: 6688
+spring:
+  application:
+    name: spring-cloud-microservice-config
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/jeerychris/microservice-configuration.git
+          # username: wshisuifeng
+          # password:
+          # passphrase: # ssh key
+```
+
+**enable**
+```java
+@EnableConfigServer
+@SpringBootApplication
+public class ConfigApplication {
+    public static void main(String[] args) {
+        new SpringApplication().run(ConfigApplication.class);
+    }
+}
+```
+
+### config server test
+
+**rest uri**: `http:/localhost:6688/microservice/dev/master`
+
+```
+/{application}/{profile}/[label]
+/{application}-{profile}.yml
+/{label}/{application}-{profile}.yml
+/{application}-{profile}.properties
+/{label}/{application}-{profile}.properties
+```
+
+其中{label}是指分支，默认是master
