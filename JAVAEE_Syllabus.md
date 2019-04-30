@@ -51,14 +51,14 @@ String result=Integer.toString(a);
 我写几个demo
 
 ```java
-int num=Integer.valueOf("12");
-int       num2=Integer.parseInt("12");
-double       num3=Double.valueOf("12.2");
-double       num4=Double.parseDouble("12.2");
-String       a=String.valueOf("1234");
-String       b=String.valueOf(true);
-tring       c=new Integer(12).toString();
-String       d=new Double(2.3).toString();
+int      num=Integer.valueOf("12");
+int      num2=Integer.parseInt("12");
+double   num3=Double.valueOf("12.2");
+double   num4=Double.parseDouble("12.2");
+String   a=String.valueOf("1234");
+String   b=String.valueOf(true);
+tring    c=new Integer(12).toString();
+String   d=new Double(2.3).toString();
 ```
 
 再举例下。比如我现在要用泛型
@@ -694,17 +694,46 @@ ABA：如果另一个线程修改V值假设原来是A，先修改成B，再修�
 
 ## 数据存储
 
+### Tansaction Isolation Level
+
+https://baijiahao.baidu.com/s?id=1611918898724887602&wfr=spider&for=pc
+
+支持事务的数据库，都必须具备四个特性，分别是：原子性（Atomicity）、一致性（Consistency）、隔离性（Isolation）、持久性（Durability），也就是我们常说的事务**ACID**，这样才能保证事务（（Transaction）中数据的正确性
+
+为了防止出现**脏读**、**不可重复读**、**幻读**等情况，我们就需要根据我们的实际需求来设置数据库的隔离级别。
+
+一般的数据库，都包括以下四种隔离级别：
+
+- 读未提交（Read Uncommitted）
+- 读提交（Read Committed）
+- 可重复读（Repeated Read）
+- 串行化（Serializable）
+
+**Conclusion**
+
+为什么会出现“脏读”？因为没有“select”操作没有规矩。
+为什么会出现“不可重复读”？因为“update”操作没有规矩。
+为什么会出现“幻读”？因为“insert”和“delete”操作没有规矩。
+
+“读未提（Read Uncommitted）”能预防啥？啥都预防不了。
+
+“读提交（Read Committed）”能预防啥？使用“快照读（Snapshot Read）”，避免“脏读”，但是可能出现“不可重复读”和“幻读”。
+
+“可重复读（Repeated Red）”能预防啥？使用“快照读（Snapshot Read）”，锁住被读取记录，避免出现“脏读”、“不可重复读”，但是可能出现“幻读”。
+
+“串行化（Serializable）”能预防啥？排排坐，吃果果，有效避免“脏读”、“不可重复读”、“幻读”，不过效果谁用谁知道
+
 ### MySQL 索引使用的注意事项
 
 参考：
 
-[mysql索引使用技巧及注意事项](https://link.jianshu.com/?t=https%3A%2F%2Fwww.cnblogs.com%2Fheyonggang%2Fp%2F6610526.html)
+[mysql索引使用技巧及注意事项](https://www.cnblogs.com/heyonggang/p/6610526.html)
 
 ### 说说反模式设计
 
 参考：
 
-[每个程序员要注意的  9 种反模式](https://link.jianshu.com/?t=http%3A%2F%2Fblog.jobbole.com%2F87413%2F)
+[每个程序员要注意的  9 种反模式](http://blog.jobbole.com/87413/)
 
 ### 说说分库与分表设计
 
@@ -722,7 +751,7 @@ ABA：如果另一个线程修改V值假设原来是A，先修改成B，再修�
 
 参考：
 
-[Mysql并发时经典常见的死锁原因及解决方法](https://link.jianshu.com/?t=https%3A%2F%2Fwww.cnblogs.com%2Fzejin2008%2Fp%2F5262751.html)
+[Mysql并发时经典常见的死锁原因及解决方法](https://www.cnblogs.com/zejin2008/p/5262751.html)
 
 ### 存储引擎的 InnoDB 与 MyISAM
 

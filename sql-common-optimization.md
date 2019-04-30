@@ -1,6 +1,4 @@
-作者：青春微凉不离殇 
-来源：CSDN 
-原文：https://blog.csdn.net/jie_liang/article/details/77340905 
+https://blog.csdn.net/jie_liang/article/details/77340905
 
 # sql优化的几种方法
 

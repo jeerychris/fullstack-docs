@@ -1,7 +1,8 @@
 # Java虚拟机详解04----GC算法和种类
 
-文章来源：<http://www.cnblogs.com/smyhvae/p/4744233.html>[
-](http://www.cnblogs.com/smyhvae/p/4013535.html)
+<http://www.cnblogs.com/smyhvae/p/4744233.html>
+
+<http://www.cnblogs.com/smyhvae/p/4013535.html>
 
 本文主要内容：
 

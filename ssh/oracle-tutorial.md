@@ -2,7 +2,9 @@
 
 > MySql is multiple database
 >
-> Oracle is multiple **tablespace**
+> Oracle is multiple **user**
+
+https://www.cnblogs.com/zangdalei/p/5483695.html
 
 # Table dual
 
@@ -17,7 +19,6 @@
 
 2、用来调用系统函数
 ​      
-
 ```sql
 select to_char(SYSDATE,'yyyy-mm-dd hh24:mi:ss') from dual;--获得当前系统时间
 select sys_context('userenv','terminal') from dual;--获得主机名
