@@ -23,7 +23,7 @@
 
 **quit a partially entered command**: `C-g`
 
-**x**quit help
+**x** quit help
 
 **q** quit
 
