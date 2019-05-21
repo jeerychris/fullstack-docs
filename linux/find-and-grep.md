@@ -81,8 +81,9 @@ find /usr/ -iname *sql* -type d | xargs ls --full-time --color=auto
 (4) grep magic /usr/src　　#显示/usr/src目录下的**文件(不含子目录)**包含magic的行
 (5) grep -r magic /usr/src　　#显示/usr/src目录下的**文件(包含子目录)**包含magic的行
 
-(6)grep -w pattern files ：只匹配**整个单词**，而不是字符串的一**部分**(如匹配’magic’，而不是’magical’)，
+(6) grep -w pattern files ：只匹配**整个单词**，而不是字符串的一**部分**(如匹配’magic’，而不是’magical’)，
 
+(7) grep -r --include=*.py print .
 ## Advanced
 
 `grep ‘w\(es\)t.*\1′ aa`
