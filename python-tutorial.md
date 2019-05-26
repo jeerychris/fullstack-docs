@@ -129,6 +129,169 @@ all(a)  # False, a must be iterable
 any(a)  # True
 ```
 
+### list, tuple, dict, set
+
+```python
+# list construct
+L = []
+Lk = list('abcd')
+Lv = list(range(4))
+L = [i*2 for i in range(4)]
+L = list(map(lambda x: x+1), L)
+
+# 列表的复制
+>>> a = [1, 2, 3]
+>>> b = a
+>>> c = []
+>>> c = a
+>>> d = a[:]        # use this
+>>> id(a), id(b), id(c), id(d)     
+(140180778120200, 140180778120200, 140180778120200, 140180778122696)
+# or
+import copy
+d = copy.copy(a)
+
+list_empty = [None]*10
+
+# 列表推导式书写形式：　　
+[(x, y) for x in range(10) if x % 2 and x < 5 for y in range(10) if y > 7]
+[[(x, y) for x in range(1, 4)] for y in range(7, 10)]
+
+# tuple
+# 元组的元素不能修改
+# 元组不可变，若元组的成员可变类型，则成员可编辑。
+
+(), tuple()
+tuple('abcd')
+tuple(range(4))
+t = 12345, 54321, 'hello!'      # (12345, 54321, 'hello!')
+
+(i for i in range(4))   # diff from [i for i in range(4)], <generator object <genexpr> at 0x0000008F4FB47B10>
+
+
+# dict
+{}, dict()
+dict([('sape', 4139), ('guido', 4127), ('jack', 4098)])
+{x: x**2 for x in (2, 4, 6)}
+dict(sape=4139, guido=4127, jack=4098)
+
+g = (( x,y ) for x in Lk for y in Lv)   # <generator object <genexpr> at 0x0000008F4FB47A20>
+gl = []
+for i in g:
+    gl.append(i)
+print(gl)
+# [('a', 0), ('a', 1), ('a', 2), ('a', 3), ('b', 0), ('b', 1), ('b', 2), ('b', 3), ('c', 0), ('c', 1), ('c', 2), ('c', 3), ('d', 0), ('d', 1), ('d', 2), ('d', 3)]
+{k:v for k in Lk for v in Lv}   # {'a': 3, 'b': 3, 'c': 3, 'd': 3}, wrong
+
+d = {'a': 0, 'b': 1, 'c': 2, 'd': 3}
+z =zip(Lk, Lv)
+print(list(z))  # [('a', 0), ('b', 1), ('c', 2), ('d', 3)]
+dict(zip(Lk, Lv))
+
+reverse = {v:k for k, v in d.items()}
+reverse = dict(zip(d.values(), d.keys()))
+
+prices = { 'A':123, 'B':450.1, 'C':12, 'E':444, }
+max(zip(prices.values(), prices.keys()))
+
+# set
+# 集合（set）是一个无序的不重复元素序列
+set()   # empty set
+# {a,} error, {} empty dict
+set('aaccbb') # {'a', 'b', 'c'}     # 去重功能, 排序
+list('aaccbb')  # ['a', 'a', 'c', 'c', 'b', 'b']
+tuple('aaccbb') # ('a', 'a', 'c', 'c', 'b', 'b')
+
+# 两个集合间的运算.
+>>> a = set('abracadabra')
+>>> b = set('alacazam')
+>>> a                                  
+{'a', 'b', 'c', 'd', 'r'}
+>>> a - b                              # 集合a中包含而集合b中不包含的元素
+{'b', 'd', 'r'}
+>>> a | b                              # 集合a或b中包含的所有元素
+{'a', 'b', 'c', 'd', 'l', 'm', 'r', 'z'}
+>>> a & b                              # 集合a和b中都包含了的元素
+{'a', 'c'}
+>>> a ^ b                              # 不同时包含于a和b的元素
+{'b', 'd', 'l', 'm', 'r', 'z'}
+
+{x for x in 'abracadabra' if x not in 'abc'}
+
+# s.update( {"字符串"} ) 将字符串添加到集合中，有重复的会忽略。
+# s.update( "字符串" ) 将字符串拆分单个字符后，然后再一个个添加到集合中，有重复的会忽略。
+
+set('apple')    # {'a', 'e', 'l', 'p'}
+set(('apple'))  # {'apple'}
+```
+
+## Python3 数据结构
+
+module `collections`
+
+### 将列表当做堆栈使用
+
+```python
+>>> stack = [3, 4, 5]
+>>> stack.append(6)
+>>> stack.append(7)
+>>> stack
+[3, 4, 5, 6, 7]
+>>> stack.pop()
+7
+>>> stack
+[3, 4, 5, 6]
+>>> stack.pop()
+6
+>>> stack.pop()
+5
+>>> stack
+[3, 4]
+```
+
+### 将列表当作队列使用
+
+```python
+>>> from collections import deque
+>>> queue = deque(["Eric", "John", "Michael"])
+>>> queue.append("Terry")           # Terry arrives
+>>> queue.append("Graham")          # Graham arrives
+>>> queue.popleft()                 # The first to arrive now leaves
+'Eric'
+>>> queue.popleft()                 # The second to arrive now leaves
+'John'
+>>> queue                           # Remaining queue in order of arrival
+deque(['Michael', 'Terry', 'Graham'])
+```
+
+### 列表推导式
+
+列表推导式提供了从**序列**创建列表的简单途径。
+
+```python
+vec = [2, 4, 6]
+[3*x for x in vec]      # [6, 12, 18]
+[[x, x**2] for x in vec]    # [[2, 4], [4, 16], [6, 36]]
+freshfruit = ['  banana', '  loganberry ', 'passion fruit  ']
+[weapon.strip() for weapon in freshfruit]   # ['banana', 'loganberry', 'passion fruit']
+```
+
+### 遍历技巧
+
+```python
+knights = {'gallahad': 'the pure', 'robin': 'the brave'}
+for k, v in knights.items():
+    print(k, v)
+
+for i, v in enumerate(['tic', 'tac', 'toe']):
+    print(i, v)
+
+l = list(range(10))
+# l.reverse()
+for i in reversed(range(10)):
+    print(l[i])
+```
+
 ### scope
 
 ```python
@@ -215,14 +378,14 @@ gl_xiaoming = {"name": "小明", "age": 18}
 demo(10, *gl_nums, **gl_xiaoming)
 ```
 
-### iterable
+### iterator and generator
 
 ```python
 list = []   # list = list(), list(it)
             # mutable
 tuple = ()  # tuple = tuple(), tuple(it)
             # immutable
-dict = {"name": "jone"}   # dict = dict(), dict(key iterable, value iterable), dict([(k1,v1)])
+dict = {"name": "jone"}   # dict = dict(), dict([(k1,v1)])
 set = set() # set(it)
 
 for i in list:
@@ -242,6 +405,64 @@ while True:
   except StopIteration:
     break;
 ```
+
+#### 创建一个迭代器
+
+把一个类作为一个迭代器使用需要在类中实现两个方法`__iter__()` 与`__next__()`
+
+```python
+class MyNumbers:
+  def __iter__(self):
+    self.a = 1
+    return self
+ 
+  def __next__(self):
+    if self.a <= 20:
+      x = self.a
+      self.a += 1
+      return x
+    else:
+      raise StopIteration
+ 
+myclass = MyNumbers()
+myiter = iter(myclass)
+ 
+for x in myiter:
+  print(x)
+```
+
+#### generator
+
+生成器是一个**返回迭代器的函数**，**只能用于迭代**操作，更简单点理解生成器就是一个迭代器
+
+在调用生成器运行的过程中，每次遇到yield时
+函数会**暂停并保存当前所有的运行信息，返回 yield 的值**, 并在下一次执行 next() 方法时从当前位置继续运行。
+
+```python
+def fibonacci(n):
+    '生成器函数 - 斐波那契'
+    a, b, counter = 0, 1, 0
+    while True:
+        if (counter > n):
+            return
+        yield a
+        a, b = b, a + b
+        counter += 1
+
+
+f = fibonacci(10)  # f 是一个迭代器，由生成器返回生成
+
+while True:
+    try:
+        print(next(f), end=" ")
+    except StopIteration:
+        sys.exit()
+
+l = [i for i in range(4)]   # list, equal to list(range(4))
+
+g = (i for i in range(4))   # generator, not tuple(range(4))
+```
+
 
 ## file
 
@@ -1007,7 +1228,125 @@ students = [('john', 'A', 15), ('jane', 'B', 12), ('dave', 'B', 10)]
 sorted(students, key=lambda s: s[2])  # 按年龄排序 [('dave', 'B', 10), ('jane', 'B', 12), ('john', 'A', 15)]
 
 sorted(students, key=lambda s: s[2], reverse=True)  # 按降序 [('john', 'A', 15), ('jane', 'B', 12), ('dave', 'B', 10)]
+```
 
+## Python2.x与3​​.x版本区别
+
+### **map、filter 和 reduce**
+
+这三个函数号称是函数式编程的代表。在 Python3.x 和 Python2.x 中也有了很大的差异。
+
+首先我们先简单的在 Python2.x 的交互下输入 map 和 filter,看到它们两者的类型是 built-in function(内置函数):
+
+```python
+>>> map
+<built-in function map>
+>>> filter
+<built-in function filter>
+>>>
+```
+
+它们输出的结果类型都是列表:
+
+```python
+>>> map(lambda x:x *2, [1,2,3])
+[2, 4, 6]
+>>> filter(lambda x:x %2 ==0,range(10))
+[0, 2, 4, 6, 8]
+>>>
+```
+
+但是在Python 3.x中它们却不是这个样子了：
+
+```python
+>>> map
+<class 'map'>
+>>> map(print,[1,2,3])
+<map object at 0x10d8bd400>
+>>> filter
+<class 'filter'>
+>>> filter(lambda x:x % 2 == 0, range(10))
+<filter object at 0x10d8bd3c8>
+>>>
+```
+
+首先它们从函数变成了类，其次，它们的返回结果也从当初的列表成了一个可迭代的对象, 我们尝试用 next 函数来进行手工迭代:
+
+```python
+>>> f =filter(lambda x:x %2 ==0, range(10))
+>>> next(f)
+0
+```
+
+对于比较高端的 reduce 函数，它在 Python 3.x 中已经不属于 built-in 了，被挪到 functools 模块当中。
+
+# python network
+
+> **Note**: one computer may have several network adapter, that is, multiple IP
+
+THE NEWWORK COMMUNICATION:
+
+- IP, for computer address
+- port, for app address
+
+## socket
+
+`<socket.socket fd=408, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 10002), raddr=('127.0.0.1', 10003)>`
+
+```python
+import socket
+socket.socket(AddressFamily, Type)
+```
+
+函数 socket.socket 创建一个 socket，该函数带有两个参数：
+
+- Address Family：可以选择 AF_INET（用于 Internet 进程间通信） 或者 AF_UNIX（用于同一台机器进程间通信）,实际工作中常用AF_INET
+- Type：套接字类型，可以是 SOCK_STREAM（流式套接字，主要用于 TCP 协议）或者 SOCK_DGRAM（数据报套接字，主要用于 UDP 协议）
+
+### udp
+
+**server**
+
+```python
+import socket
+
+def main():
+    # 1. 创建套接字
+    udp_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    # 2. 绑定一个本地信息
+    localaddr = ("localhost", 7788)
+    udp_socket.bind(localaddr)  # 必须绑定自己电脑的ｉｐ以及ｐｏｒｔ，其他的不行
+
+    # 3. 接收数据
+    while True:
+        recv_data = udp_socket.recvfrom(1024)
+        # recv_data这个变量中存储的是一个元组(接收到的数据，(发送方的ip, port))
+        recv_msg = recv_data[0]  # 存储接收的数据
+        send_addr = recv_data[1]  # 存储发送方的地址信息
+        # 4. 打印接收到的数据
+        print("%s:%s" % (str(send_addr), recv_msg.decode("utf-8")))
+    # 5. 关闭套接字
+    udp_socket.close()
+
+if __name__ == "__main__":
+    main()
+```
+
+**client**
+
+```python
+if __name__ == "__main__":
+    my_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
+    server_addr = ("localhost", 7788)
+
+    while True:
+        msg = input("something, type quit to stop")
+        my_socket.sendto(msg.encode(), server_addr)
+        if msg == "quit":
+            break
+
+    my_socket.close()
 ```
 
 # The vscode python tutorial
