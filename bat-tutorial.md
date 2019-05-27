@@ -218,12 +218,97 @@ batch `for %%i in (1 2 3 4 5) do @echo %%i`
 
 ```bat
 for /r %%i in (*.exe) do echo %%i
+
 for /r c:\ %%i in (boot.int) do echo %%i
+
+for /f "delims=" %%i in ("%~dp0\..") do (
+    set "CMDER_ROOT=%%~fi"
+)
 
 FOR /L %%variable IN (start,step,end) DO command [command-parameters]
     该集表示以增量形式从开始到结束的一个数字序列。
     因此，(1,1,5) 将产生序列 1 2 3 4 5，(5,-1,1) 将产生
     序列 (5 4 3 2 1)。
+```
+
+FOR /F [“options”] %%variable IN (file-set) DO command [command-parameters]
+FOR /F [“options”] %%variable IN ("string") DO command [command-parameters]
+FOR /F [“options”] %%variable IN (`command`) DO command [command-parameters]
+    带引号的字符串”options”包括一个或多个
+    指定不同解析选项的关键字。这些关键字为:
+        eol=c           - 指一个**行注释字符**, line to ignored which started with c
+        skip=n          - 指在文件开始时忽略的行数。
+        delims=xxx      - 指分隔符集。这个替换了空格和跳格键的
+                          默认分隔符集。
+        tokens=x,y,m-n  - 指每行的哪一个符号被传递到每个迭代
+                          的 for 本身。这会导致额外变量名称的分配。m-n
+                          格式为一个范围。通过 nth 符号指定 mth。如果
+                          符号字符串中的最后一个字符星号，
+                          那么额外的变量将在最后一个符号解析之后
+                          分配并接受行的保留文本。经测试，该参数最多
+                          只能区分31个字段。
+        **usebackq**        - 使用后引号（键盘上数字1左面的那个键`）。
+                        **未使用参数usebackq时**：file-set表示文件，但不能含有空格
+                            双引号表示字符串，即”string”
+                            **单引号表示执行命令**，即’command’
+                          使用参数usebackq时：file-set和”file-set”都表示文件
+                          当文件路径或名称中有空格时，就可以用双引号括起来
+                            单引号表示字符串，即’string’
+                            后引号表示命令执行，即`command`
+
+```bat
+@echo off
+rem 首先建立临时文件test.txt
+echo ;注释行,这是临时文件,用完删除 >test.txt
+echo 11 12 13 14 15 16 >>test.txt
+echo 21,22,23,24,25,26 >>test.txt
+echo 31-32-33-34-35-36 >>test.txt
+FOR /F "eol=; tokens=1,3* delims=,- " %%i in (test.txt) do (
+    echo %%i
+    echo %%j 
+    echo %%k
+)
+rem output
+:: 11
+:: 13
+:: 14 15 16 
+:: 21
+:: 23
+:: 24,25,26 
+:: 31
+:: 33
+:: 34-35-36 
+
+:: all content
+FOR /F "eol= delims=" %%i in (test.txt) do (
+    echo %%i
+)
+
+:: show all enviroment variable
+for /f "delims=" %%i in ('set') do @echo %%i
+for /f "usebackq delims=" %%i in (`set`) do @echo %%i
+
+del test.txt
+```
+
+## string operation
+
+```bat
+@echo off
+set abc=hello world, this string come from bat
+echo 原字符串为:%abc%
+echo 截取前5个字符:%abc:~0,5%
+echo 截取最后5个字符:%abc:~-5%
+
+@echo off
+set aa=你好！世界
+echo 替换前:%aa%
+echo 替换后:%aa:世界=中国%
+
+rem 合并
+set a=a && set b=b
+set c=%a%%b%
+echo %c%
 ```
 
 ## common special chars
@@ -316,6 +401,8 @@ cd pro*
 逗号相当于空格，在某些情况下“,”可以用来当做空格使
 比如
 dir,c:\
+often used in cmd line, write commands in one line.
+for %i in (*.md), do echo %%i
 
 () 括号
 小括号在批处理编程中有特殊的作用，左右括号必须成对使用，括号中可以包括多行命令，这些命令将被看成一个整体，视为一条命令行。
