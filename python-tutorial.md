@@ -292,7 +292,7 @@ for i in reversed(range(10)):
     print(l[i])
 ```
 
-### scope
+### global and local
 
 ```python
 def demo1():
@@ -335,6 +335,47 @@ print("gl_num = %d" % gl_num)
 demo3()
 demo4()
 ```
+
+**为什么修改全局的dict变量不用global关键字**
+
+<https://www.jb51.net/article/86765.htm>
+
+比如下面这段代码
+
+```python
+s = 'foo'
+d = {'a':1} 
+def f(): 
+  s = 'bar'
+  d['b'] = 2
+f() 
+print s 
+print d 
+```
+
+为什么修改字典d的值不用global关键字先声明呢？ 这是因为，
+在`s = 'bar'`这句中，它是**有歧义的**，因为**它既可以是表示引用全局变量s，也可以是创建一个新的局部变量，所以在python中，默认它的行为是创建局部变量，除非显式声明`global`**.
+
+在d['b']=2这句中，它是“明确的”，因为如果**把d当作是局部变量的话，它会报KeyError**，所以它只能是引用全局的d,故不需要多此一举显式声明global。
+
+上面这两句赋值语句其实是不同的行为，一个是`rebinding`, 一个是`mutation`.
+
+但是如果是下面这样
+
+
+```python
+d = {'a':1} 
+def f(): 
+  d = {} 
+  d['b'] = 2
+f() 
+print d 
+```
+
+在d = {}这句，它是”有歧义的“了，所以它是创建了局部变量d，而不是引用全局变量d，所以d['b']=2也是操作的局部变量。
+
+推而远之，这一切现象的本质就是”它是否是明确的“。
+仔细想想，就会发现不止dict不需要global，所有”明确的“东西都不需要global。因为int类型str类型之类的，只有一种修改方法，即x = y， 恰好这种修改方法同时也是创建变量的方法，所以产生了歧义，不知道是要修改还是创建。而dict/list/对象等，可以通过dict['x']=y或list.append()之类的来修改，跟创建变量不冲突，不产生歧义，所以都不用显式global。
 
 ### functions
 
@@ -464,7 +505,7 @@ g = (i for i in range(4))   # generator, not tuple(range(4))
 ```
 
 
-## file
+## file and with clause
 
 ```python
 def read_file(filename):
@@ -479,18 +520,25 @@ def read_file(filename):
     print(file.read())
     file.close()
 
+# def write_file(filename, data):
+#   """
+#   write data to filename
+#   """
+#   try:
+#     file = open(filename, 'w')
+#   except:
+#     pass
+#   else:
+#     if data:
+#       file.write(data)
+#     file.close()
+
 def write_file(filename, data):
   """
   write data to filename
   """
-  try:
-    file = open(filename, 'w')
-  except:
-    pass
-  else:
-    if data:
-      file.write(data)
-    file.close()
+  with open(filename, 'w') as f:
+    f.write(data)
 ```
 
 ### 操作文件的函数/方法
@@ -605,7 +653,7 @@ for c in hello_str:
 
 ```python
 import re
-pattern = re.compile("\d+")
+pattern = re.compile(r"\d+")
 result =  pattern.findall("today is 2019 08 12")
 
 # match, search, sub, 
@@ -1348,6 +1396,90 @@ if __name__ == "__main__":
 
     my_socket.close()
 ```
+
+### tcp
+
+tcp is connection oriented. udp is faster
+
+![](images/tcp-connect-trans-close.png)
+
+ACK：确认标志
+SYN：同步标志
+FIN：结束标志。
+
+**三次握手**:
+所谓三次握手（Three-Way Handshake）即建立TCP连接，就是指建立一个TCP连接时，需要客户端和服务端总共发送3个包以确认连接的建立。在socket编程中，这一过程由客户端执行connect来触发
+
+1. client send synchronization request, `connect()`, msg `SYN seq=x` to server, called `SYN_SENT` phase
+2. server reply when `accept()` get a syn request, msg `SYN ACK=x+1 seq=y` to client, called `SYN_RCVD` phase
+3. client get server's msg, it's `SYN ACK=x+1`, so client know server is synchronized, send `ACK y+1` to confirm
+
+**四次挥手**:
+所谓四次挥手（Four-Way Wavehand）即终止TCP连接，就是指断开一个TCP连接时，需要客户端和服务端总共发送4个包以确认连接的断开。在socket编程中，这一过程由客户端或服务端任一方执行close来触发
+
+**client**
+
+```python
+import socket
+
+if __name__ == '__main__':
+    tcp_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    # if client not bind to addr, system will auto allocate addr, but server usually bind addr
+    # for clients connecting
+    
+    # tcp_sock.bind(("localhost", 10003))
+
+    serv_addr = ("localhost", 10002)
+    tcp_sock.connect(serv_addr)
+
+    print("connected")
+    tcp_sock.send("hellllo".encode())
+
+    tcp_sock.close()
+```
+
+**server**
+```python
+import socket
+
+def main():
+    # 1. 买个手机(创建套接字 socket)
+    tcp_server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    # 2. 插入手机卡(绑定本地信息 bind)
+    tcp_server_socket.bind(("", 7890))
+    # 3. 将手机设置为正常的 响铃模式(让默认的套接字由主动变为被动 listen)
+    tcp_server_socket.listen(128)
+
+    # 4. 等待别人的电话到来(等待客户端的链接 accept)
+    new_client_socket, client_addr = tcp_server_socket.accept()
+    # 接收客户端发送过来的请求
+    recv_data = new_client_socket.recv(1024)
+    print(recv_data)
+    new_client_socket.send("hahahghai-----ok-----".encode("utf-8"))
+
+    # 关闭套接字
+    new_client_socket.close()
+    tcp_server_socket.close()
+
+if __name__ == "__main__":
+    main()
+```
+
+#### tcp长连接和短连接
+
+TCP在真正的读写操作之前，server与client之间必须建立一个连接，当读写操作完成后，双方不再需要这个连接时它们可以释放这个连接，连接的建立通过三次握手，释放则需要四次握手，所以说每个连接的建立都是需要资源消耗和时间消耗的
+
+**TCP短连接**
+
+- client 向 server 发起连接请求,server 接到请求，双方建立连接
+- 一次读写完成，close connection
+
+**TCP长连接**
+
+- client 向 server 发起连接 server 接到请求，双方建立连接
+- 一次读写完成，连接不关闭
+- 后续读写操作...
+- 长时间操作之后client发起关闭请求
 
 # The vscode python tutorial
 
