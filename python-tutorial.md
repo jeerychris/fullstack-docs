@@ -160,6 +160,7 @@ list_empty = [None]*10
 # tuple
 # 元组的元素不能修改
 # 元组不可变，若元组的成员可变类型，则成员可编辑。
+# no tuple reduction
 
 (), tuple()
 tuple('abcd')
