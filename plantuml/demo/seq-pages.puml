@@ -1,0 +1,15 @@
+@startuml
+header show on every page
+footer each, %page% of %lastpage%
+
+title message Q
+actor A
+actor B
+A <-> B : MQ1
+
+newpage page2
+
+A -> B : requests
+A <-- B : responses
+
+@enduml

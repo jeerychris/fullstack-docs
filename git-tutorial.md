@@ -102,6 +102,11 @@ git show HEAD^2 # show the second parent of HEAD
 git grep "hello" v2.5
 ```
 
+## github
+
+> low speed to github.com?
+
+replace github.com with http://www.github.com.cnpmjs.org/
 
 
 [more features]: https://git-scm.com/about

@@ -212,6 +212,20 @@ tracker_server=192.168.1.214:22122
 
 # Nginx
 
+1. [nginx 反向代理](https://www.cnblogs.com/ysocean/p/9392908.html)
+2. [windows下nginx的安装及使用](https://www.cnblogs.com/jiangwangxiang/p/8481661.html)
+
+## problems
+
+将nginx配置到环境变量，结果命令行输入nginx启动时，提示
+
+```bat
+could not open error log file: CreateFile() "logs/error.log" failed
+CreateFile() "C:\Users\xxxxxx/conf/nginx.conf" failed
+```
+
+原因是nginx默认是从当前目录找配置文件，结果找不到。 解决办法就是先进入nginx的安装目录，再执行nginx.exe
+
 ## install
 
 ```shell
