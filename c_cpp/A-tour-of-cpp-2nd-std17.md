@@ -281,6 +281,8 @@ swap(x,y);
 using namespace std;
 ```
 
+**internal namespace**: like `std::string_literals`
+
 ### Error Handling
 
 Exception
@@ -339,8 +341,8 @@ using the RAII technique
 
 **constructor and destructor**
 
-cons, inside to outside
-des, out to inside
+ctor, inside to outside
+~dtor, out to inside
 
 ```
 class Outter {
@@ -445,7 +447,7 @@ virtual destructor
 
 inside -> outside -> inside
 
-`dynamic_case`
+`dynamic_cast`
 
 "is this `Shape` a kind of `Circle`"
 

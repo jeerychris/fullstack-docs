@@ -70,6 +70,18 @@ global config file `~/.gitconfig`
     dump = cat-file -p
 ```
 
+# gitignore
+
+```sh
+~/.gitignore
+${project}/.gitignore
+.git/info/exclude
+```
+
+# git revision 
+
+https://git-scm.com/docs/gitrevisions
+
 # git diff
 
 ```shell
@@ -83,6 +95,13 @@ git diff --cached
 git diff HEAD
 ```
 
+# log
+
+```
+git log --grep="pattern for commit msg"
+git log -S"String to find from submitted content"
+```
+
 # useful commnad
 
 ```shell
@@ -90,7 +109,6 @@ git diff HEAD
 git log -p -1
 #  the overview of the change 
 git log --stat --summary
-
 git show HEAD^  # to see the parent of HEAD
 git show HEAD^^ # to see the grandparent of HEAD
 git show HEAD~4 # to see the great-great grandparent of HEAD
@@ -110,3 +128,60 @@ replace github.com with http://www.github.com.cnpmjs.org/
 
 
 [more features]: https://git-scm.com/about
+
+# git clang-format
+
+# git submodule
+
+https://git-scm.com/book/en/v2/Git-Tools-Submodules
+
+## add a project as submodule
+
+```sh
+$ git submodule add https://github.com/chaconinc/DbConnector
+Cloning into 'DbConnector'...
+remote: Counting objects: 11, done.
+remote: Compressing objects: 100% (10/10), done.
+remote: Total 11 (delta 0), reused 11 (delta 0)
+Unpacking objects: 100% (11/11), done.
+Checking connectivity... done.
+
+$ git status
+On branch master
+Your branch is up-to-date with 'origin/master'.
+
+Changes to be committed:
+  (use "git reset HEAD <file>..." to unstage)
+
+	new file:   .gitmodules
+	new file:   DbConnector
+
+$ cat .gitmodules
+[submodule "DbConnector"]
+	path = DbConnector
+	url = https://github.com/chaconinc/DbConnector
+
+$ git diff --cached DbConnector
+diff --git a/DbConnector b/DbConnector
+new file mode 160000
+index 0000000..c3f01dc
+--- /dev/null
++++ b/DbConnector
+@@ -0,0 +1 @@
++Subproject commit c3f01dc8862123d317dd46284b05b6892c7b29bc
+
+$ git commit -am 'Add DbConnector module'
+[master fb9093c] Add DbConnector module
+ 2 files changed, 4 insertions(+)
+ create mode 100644 .gitmodules
+ create mode 160000 DbConnector
+```
+
+`pwd` not in submodule dir, no submodule related cmd will ignore submodule contents.
+
+go to submodule dir for it's git cmd
+
+## Cloning a Project with Submodules
+
+```sh
+```
