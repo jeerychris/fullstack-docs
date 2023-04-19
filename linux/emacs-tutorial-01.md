@@ -54,6 +54,8 @@ M-e     Move forward to end of sentence
 M-<	start of text
 M-> 	end
 
+M-r   runs the command move-to-window-line-top-bottom
+
 2. numeric argument, repeat count normally
 
 C-u 8 c-n
@@ -63,7 +65,25 @@ meta-8 c-n
 C-g
 
 4. windows
-C-x 1       kill all other window
+C-x 0		delete-window
+C-x 1		delete-other-windows
+C-x 2		split-window-below
+C-x 3		split-window-right
+
+C-x o		other-window
+
+C-x 4		ctl-x-4-prefix
+C-x 4 C-f	find-file-other-window
+C-x 4 C-o	display-buffer
+C-x 4 .		xref-find-definitions-other-window
+C-x 4 0		kill-buffer-and-window
+C-x 4 a		add-change-log-entry-other-window
+C-x 4 b		switch-to-buffer-other-window
+C-x 4 c		clone-indirect-buffer-other-window
+C-x 4 d		dired-other-window
+C-x 4 f		find-file-other-window
+C-x 4 m		compose-mail-other-window
+C-x 4 r		find-file-read-only-other-window
 
 5. insert and delete
 
@@ -163,20 +183,6 @@ mode line: [(Fundamental)] instead of (Fundamental)
 help key, `c-h` or `f1`
 
 C-h ?           help-for-help
-C-h t           help-with-tutorial
-
-C-h c           describe-key-briefly
-C-h k           describe-key
-C-h b           describe-bindings
-C-h w           where-is
-
-C-h f           describe-function
-C-h v           describe-variable
-C-h l           view-lossage
-C-h m           describe-mode
-
-C-h i           info
-C-h r           info-emacs-manual
 
 ```
 a PATTERN   Show commands whose name matches the PATTERN (a list of words
@@ -230,10 +236,7 @@ C-w         Information on absence of warranty for GNU Emacs.
 
 info, manage with emacs help system
 
-c-h i       info
 c-h m       describe-mode info-mode
-
-c-h h       info tutorial
 
 ```
 Info mode provides commands for browsing through the Info documentation tree.

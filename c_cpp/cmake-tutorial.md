@@ -3,7 +3,7 @@ some note from github cmake_examples, https://github.com/ttroy50/cmake-examples
 
 ## compile_commands.json
 
-` cmake .. -DCMAKE_EXPORT_COMPILE_COMMANDS=on -DCMAKE_BUILD_TYPE=RelWithDebInfo`
+`cmake .. -DCMAKE_EXPORT_COMPILE_COMMANDS=on -DCMAKE_BUILD_TYPE=RelWithDebInfo`
 
 ## gcc or clang
 

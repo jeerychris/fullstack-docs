@@ -91,3 +91,7 @@ find /usr/ -iname *sql* -type d | xargs ls --full-time --color=auto
 
 [grep-common-usages](http://www.cnblogs.com/end/archive/2012/02/21/2360965.html)
 [find-common-usages](https://www.cnblogs.com/archoncap/p/6144369.html)
+
+# sed
+
+`find . -type f -iname config | xargs sed -i s/github.com.cnpmjs.org/github.com/`
